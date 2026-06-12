@@ -2,7 +2,6 @@ package com.sabanciuniv.controller;
 
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Set;
 import org.springframework.core.io.ClassPathResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,13 +30,17 @@ import jakarta.annotation.PostConstruct;
 @RestController
 @RequestMapping("/recipegallery")
 public class RecipeGalleryRestController {
-	
-	@Autowired private RecipeRepository recipeRepository;
+
+	private final RecipeRepository recipeRepository;
+
+	public RecipeGalleryRestController(RecipeRepository recipeRepository) {
+		this.recipeRepository = recipeRepository;
+	}
 	
 	private static final Logger logger = LoggerFactory.getLogger(RecipeGalleryRestController.class);
 	
 	@PostConstruct
-	public void init() throws IOException, URISyntaxException {
+	public void init() {
 		
 		if (recipeRepository.count() == 0) {
 			
@@ -94,46 +96,28 @@ public class RecipeGalleryRestController {
 	
 	@GetMapping("/recipes")
 	public List<Recipe> recipes(){
-		
 		return recipeRepository.findAll();
-	
 	}
 	
 	@PostMapping("/recipes/save")
 	public Recipe saveRecipe(@RequestBody Recipe recipe) {
-		
-		Recipe recipeSaved = recipeRepository.save(recipe);
-		
-		return recipeSaved;
+		return recipeRepository.save(recipe);
 	}
 	
 	@GetMapping("/recipes/search/name")
 	public List<Recipe> searchRecipesByName(@RequestParam("name") String name) {
-		
-	    List<Recipe> recipes = recipeRepository.findByNameContainsIgnoreCase(name);
-	    
-	    // maybe I want empty list to be returned
-	    /*if (recipes.isEmpty()) {
-	    	
-	    	throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No recipes found for the given name");
-	    }*/
-	    
-	    return recipes;
+        return recipeRepository.findByNameContainsIgnoreCase(name);
 	}
 
 	
 	@GetMapping("/recipes/search/ingredients")
 	public List<Recipe> searchRecipesByIngredients(@RequestParam("ingredients") String ingredients){
-		
-		List<Recipe> recipes = recipeRepository.findByDescriptionContainsIgnoreCase(ingredients);
-		
-		return recipes;
+        return recipeRepository.findByDescriptionContainsIgnoreCase(ingredients);
 	}
 	
 	@GetMapping("/recipes/search")
 	public List<Recipe> searchRecipes(@RequestParam("search") String word){
-		
-		
+
 		List<Recipe> recipesByName = searchRecipesByName(word);
 		List<Recipe> recipesByIngredients = searchRecipesByIngredients(word);
 		
@@ -147,9 +131,7 @@ public class RecipeGalleryRestController {
 		recipesAll.clear();
 		
 		recipesAll.addAll(recipesAllset);
-		
-		
-		
+
 		return recipesAll;
 	}
 	
