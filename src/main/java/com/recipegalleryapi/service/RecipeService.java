@@ -1,5 +1,6 @@
 package com.recipegalleryapi.service;
 
+import com.recipegalleryapi.exception.RecipeNotFoundException;
 import com.recipegalleryapi.model.Recipe;
 import com.recipegalleryapi.repo.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class RecipeService {
 
     public Recipe getRecipeById(String id) {
         return recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
+                .orElseThrow(() -> new RecipeNotFoundException(id));
     }
 
     public List<Recipe> searchByName(String name) {
@@ -53,7 +54,7 @@ public class RecipeService {
 
     public void deleteRecipe(String id) {
         if (!recipeRepository.existsById(id)) {
-            throw new RuntimeException("Recipe not found with id: " + id);
+            throw new RecipeNotFoundException(id);
         }
         recipeRepository.deleteById(id);
     }
