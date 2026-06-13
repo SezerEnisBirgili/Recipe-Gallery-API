@@ -2,6 +2,7 @@ package com.recipegalleryapi.model;
 
 
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,10 @@ public class Recipe {
 	
 	@Id
 	private String id;
-	
+
+	@NotBlank(message = "Name is required")
 	private String name;
+
 	private String description;
 	private String instructions;
 	private String image;

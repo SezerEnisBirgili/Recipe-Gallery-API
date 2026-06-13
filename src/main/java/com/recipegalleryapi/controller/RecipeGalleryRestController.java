@@ -3,6 +3,7 @@ package com.recipegalleryapi.controller;
 import java.io.IOException;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.core.io.ClassPathResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,12 +82,12 @@ public class RecipeGalleryRestController {
 	}
 
 	@PostMapping("/recipes/save")
-	public Recipe saveRecipe(@RequestBody Recipe recipe) {
+	public Recipe saveRecipe(@Valid @RequestBody Recipe recipe) {
 		return recipeService.saveRecipe(recipe);
 	}
 
 	@PutMapping("/recipe/{id}")
-	public Recipe updateRecipe(@PathVariable String id, @RequestBody Recipe recipe) {
+	public Recipe updateRecipe(@Valid @PathVariable String id, @RequestBody Recipe recipe) {
 		return recipeService.updateRecipe(id, recipe);
 	}
 
