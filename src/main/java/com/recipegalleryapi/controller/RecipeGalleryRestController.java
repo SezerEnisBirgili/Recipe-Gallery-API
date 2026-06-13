@@ -7,10 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.core.io.ClassPathResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.recipegalleryapi.model.Recipe;
 import com.recipegalleryapi.repo.RecipeRepository;
@@ -121,8 +119,8 @@ public class RecipeGalleryRestController {
 		ClassPathResource resource = new ClassPathResource("static/images/" + imageName);
 		if (resource.exists()) {
 			return resource.getContentAsByteArray();
-		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "image not found");
 		}
+
+		throw new RuntimeException("Image not found: " + imageName);
 	}
 }
