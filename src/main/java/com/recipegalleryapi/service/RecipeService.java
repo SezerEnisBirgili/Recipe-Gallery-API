@@ -1,13 +1,12 @@
-package com.sabanciuniv.service;
+package com.recipegalleryapi.service;
 
-import com.sabanciuniv.model.Recipe;
-import com.sabanciuniv.repo.RecipeRepository;
+import com.recipegalleryapi.model.Recipe;
+import com.recipegalleryapi.repo.RecipeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

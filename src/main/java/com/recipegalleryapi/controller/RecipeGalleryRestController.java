@@ -1,4 +1,4 @@
-package com.sabanciuniv.controller;
+package com.recipegalleryapi.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,9 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.sabanciuniv.model.Recipe;
-import com.sabanciuniv.repo.RecipeRepository;
-import com.sabanciuniv.service.RecipeService;
+import com.recipegalleryapi.model.Recipe;
+import com.recipegalleryapi.repo.RecipeRepository;
+import com.recipegalleryapi.service.RecipeService;
 
 import jakarta.annotation.PostConstruct;
 

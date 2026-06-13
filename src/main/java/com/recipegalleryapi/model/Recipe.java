@@ -1,4 +1,4 @@
-package com.sabanciuniv.model;
+package com.recipegalleryapi.model;
 
 
 
