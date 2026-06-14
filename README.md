@@ -12,44 +12,62 @@ A RESTful API built with Spring Boot and MongoDB for managing a gallery of recip
 
 ## Getting Started
 
-### Prerequisites
-
-- Java 17
-- Maven
-- Docker (optional)
-
-### Run Locally
-
-1. Clone the repository
-2. Create an `.env` file in the root directory (see Environment Variables below)
-3. Run the application:
-
 ```bash
-mvn spring-boot:run
+git clone https://github.com/SezerEnisBirgili/Recipe-Gallery-API
+cd Recipe-Gallery-API
 ```
 
-The API will start at `http://localhost:8080`. If the database is empty, 6 sample recipes are seeded automatically on startup.
+---
 
-### Run with Docker
+### Option 1 — Run Locally
 
-```bash
-docker-compose up --build
+1. Open `src/main/resources/application.properties`
+
+2. Get your connection string from MongoDB Atlas → **Drivers → Java 5.1 or higher**
+
+3. Update the following values:
+
+```properties
+SPRING_DATA_MONGODB_URI=your_mongodb_connection_string
+SPRING_DATA_MONGODB_DATABASE=your_database_name
 ```
 
-To reuse existing containers without rebuilding:
+> `your_database_name` is the name of the database inside your MongoDB Atlas cluster. Change it to match whatever database name you created.
+
+4. Run the application:
 
 ```bash
-docker-compose up
+.\mvnw spring-boot:run
 ```
 
-## Environment Variables
+---
 
-Create a `.env` file in the root directory:
+### Option 2 — Run with Docker
+
+1. Install and open **Docker Desktop**
+
+2. Create a `.env` file in the root directory
+
+3. Get your connection string from MongoDB Atlas → **Drivers → Java 5.1 or higher**
+
+4. Add the following to your `.env`:
 
 ```
 SPRING_DATA_MONGODB_URI=your_mongodb_connection_string
-SPRING_DATA_MONGODB_DATABASE=recipegallery
+SPRING_DATA_MONGODB_DATABASE=your_database_name
 ```
+
+> `your_database_name` is the name of the database inside your MongoDB Atlas cluster. Change it to match whatever database name you created.
+
+5. Start the application:
+
+```bash
+docker compose up
+```
+
+---
+
+The API will start at `http://localhost:8080`. If the database is empty, 6 sample recipes are seeded automatically on startup.
 
 ## API Endpoints
 
@@ -138,5 +156,5 @@ src/
 ## Running Tests
 
 ```bash
-mvn test
+.\mvnw test
 ```
