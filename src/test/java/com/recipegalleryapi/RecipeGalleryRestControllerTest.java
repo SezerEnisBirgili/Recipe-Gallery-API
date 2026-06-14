@@ -18,15 +18,17 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RecipeGalleryRestController.class)
 public class RecipeGalleryRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private RecipeGalleryRestController controller;
 
     @MockitoBean
     private RecipeService recipeService;
@@ -141,4 +143,90 @@ public class RecipeGalleryRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
     }
+
+    @Test
+    void handleNotFound_returnsErrorMessage() throws Exception {
+        when(recipeService.getRecipeById("999"))
+                .thenThrow(new RecipeNotFoundException("999"));
+
+        mockMvc.perform(get("/recipegallery/recipe/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error").value("Recipe not found with id: 999"));
+    }
+
+    @Test
+    void handleValidation_blankName_returns400() throws Exception {
+        String invalidRecipe = """
+                {
+                    "name": "",
+                    "description": "some desc",
+                    "instructions": "some instructions",
+                    "image": "img.jpg",
+                    "imagePath": "url"
+                }
+                """;
+
+        mockMvc.perform(post("/recipegallery/recipes/save")
+                        .contentType("application/json")
+                        .content(invalidRecipe))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").exists());
+    }
+
+    @Test
+    void handleValidation_missingName_returns400WithMessage() throws Exception {
+        String invalidRecipe = """
+                {
+                    "description": "some desc",
+                    "instructions": "some instructions",
+                    "image": "img.jpg",
+                    "imagePath": "url"
+                }
+                """;
+
+        mockMvc.perform(post("/recipegallery/recipes/save")
+                        .contentType("application/json")
+                        .content(invalidRecipe))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").value("Name is required"));
+    }
+
+    @Test
+    void recipeNotFoundException_hasCorrectMessage() {
+        RecipeNotFoundException ex = new RecipeNotFoundException("42");
+        assert ex.getMessage().equals("Recipe not found with id: 42");
+    }
+
+    @Test
+    void init_whenDatabaseEmpty_savesRecipes() {
+        when(recipeRepository.count()).thenReturn(0L);
+
+        controller.init();
+
+        verify(recipeService, times(6)).saveRecipe(any(Recipe.class));
+    }
+
+    @Test
+    void init_whenDatabaseNotEmpty_skipsSeeding() {
+        when(recipeRepository.count()).thenReturn(5L);
+
+        controller.init();
+
+        verify(recipeService, never()).saveRecipe(any(Recipe.class));
+    }
+
+    @Test
+    void getRecipeImage_imageExists_returnsByteArray() throws Exception {
+        mockMvc.perform(get("/recipegallery/images/chickenSalad.jpeg"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE));
+    }
+
+    @Test
+    void getRecipeImage_imageNotFound_throws404() throws Exception {
+        mockMvc.perform(get("/recipegallery/images/doesNotExist.jpg"))
+                .andExpect(status().isNotFound());
+    }
+
 }
